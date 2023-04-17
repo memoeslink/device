@@ -12,14 +12,14 @@ afterEvaluate {
             release(MavenPublication) {
                 from components.release
 
-                groupId = 'com.memoeslink.manager'
+                groupId = 'com.memoeslink.device'
                 artifactId = 'release'
                 version = currentVersionName
             }
             debug(MavenPublication) {
                 from components.debug
 
-                groupId = 'com.memoeslink.manager'
+                groupId = 'com.memoeslink.device'
                 artifactId = 'debug'
                 version = currentVersionName
             }
