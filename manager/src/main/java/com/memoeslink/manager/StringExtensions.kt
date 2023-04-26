@@ -1,3 +1,5 @@
+@file:JvmName("StringExtensions")
+
 package com.memoeslink.manager
 
 import java.math.BigInteger
