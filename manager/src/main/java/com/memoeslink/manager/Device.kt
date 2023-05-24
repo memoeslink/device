@@ -3,7 +3,11 @@ package com.memoeslink.manager
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.pm.PackageManager
-import android.net.*
+import android.net.ConnectivityManager
+import android.net.LinkProperties
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest
 import android.net.wifi.SupplicantState
 import android.net.wifi.WifiInfo
 import android.net.wifi.WifiManager
@@ -22,18 +26,23 @@ class Device(context: Context) : ContextWrapper(context) {
                 return if (name.isEmpty()) getString(R.string.device_android)
                 else getString(R.string.device_version, name, Build.VERSION.RELEASE)
             }
+
             InformationType.BRAND -> return getString(R.string.device_brand,
                 Build.BRAND.takeUnless { it.isNullOrEmpty() } ?: DEFAULT_VALUE)
+
             InformationType.BRAND_AND_MODEL -> return getString(R.string.device,
                 (Build.BRAND.takeUnless { it.isNullOrEmpty() }
                     ?: DEFAULT_VALUE) + Build.MODEL.takeUnless { it.isNullOrEmpty() }
                     .let { " $it" })
+
             InformationType.MANUFACTURER_AND_MODEL -> return getString(R.string.device,
                 (Build.MANUFACTURER.takeUnless { it.isNullOrEmpty() }
                     ?: DEFAULT_VALUE) + Build.MODEL.takeUnless { it.isNullOrEmpty() }
                     .let { " $it" })
+
             InformationType.PRODUCT -> return getString(R.string.device,
                 Build.PRODUCT.takeUnless { it.isNullOrEmpty() } ?: DEFAULT_VALUE)
+
             InformationType.NETWORK_NAME -> {
                 val networkName = getNetworkName()
                 return when {
@@ -41,19 +50,23 @@ class Device(context: Context) : ContextWrapper(context) {
                     networkName in listOf(
                         DEFAULT_VALUE, UNKNOWN_SSID
                     ) -> getString(R.string.device_network_unknown_ssid)
+
                     else -> getString(R.string.device_network_ssid, networkName)
                 }
             }
+
             InformationType.NETWORK_OPERATOR -> {
                 val networkOperator = getNetworkOperator()
                 return if (networkOperator.isBlank()) getString(R.string.device_network_operator_disconnected)
                 else getString(R.string.device_network_operator, networkOperator)
             }
+
             InformationType.IP_ADDRESS -> {
                 val ipAddress = getIpAddress()
                 return if (ipAddress.isBlank()) getString(R.string.device_unknown_ip)
                 else getString(R.string.device_ip, ipAddress)
             }
+
             else -> return DEFAULT_VALUE
         }
     }
@@ -92,6 +105,7 @@ class Device(context: Context) : ContextWrapper(context) {
         Integer.toHexString(Build.USER.length % 16)[0]
     ).toMd5().uppercase()
 
+    @Suppress("DEPRECATION")
     fun getAndroidVersionName(): String {
         if (VERSION_CODES.isNullOrEmpty()) return DEFAULT_VALUE
 
@@ -125,6 +139,7 @@ class Device(context: Context) : ContextWrapper(context) {
         return network != null
     }
 
+    @Suppress("DEPRECATION")
     fun getNetworkName(): String {
         if (!isNetworkAvailable()) return DEFAULT_VALUE
 
@@ -166,10 +181,14 @@ class Device(context: Context) : ContextWrapper(context) {
         val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE)
 
         if (connectivityManager is ConnectivityManager) {
-            val link: LinkProperties =
-                connectivityManager.getLinkProperties(connectivityManager.activeNetwork) as LinkProperties
-            return if (link.linkAddresses.isEmpty()) DEFAULT_IP_ADDRESS
-            else link.linkAddresses[0].toString()
+            try {
+                val link: LinkProperties =
+                    connectivityManager.getLinkProperties(connectivityManager.activeNetwork) as LinkProperties
+                return if (link.linkAddresses.isEmpty()) DEFAULT_IP_ADDRESS
+                else link.linkAddresses[0].toString()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
         return DEFAULT_IP_ADDRESS
     }
