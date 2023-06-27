@@ -105,7 +105,6 @@ class Device(context: Context) : ContextWrapper(context) {
         Integer.toHexString(Build.USER.length % 16)[0]
     ).toMd5().uppercase()
 
-    @Suppress("DEPRECATION")
     fun getAndroidVersionName(): String {
         if (VERSION_CODES.isNullOrEmpty()) return DEFAULT_VALUE
 

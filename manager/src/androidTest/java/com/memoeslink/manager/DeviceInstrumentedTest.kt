@@ -144,5 +144,6 @@ internal class DeviceInstrumentedTest {
         assertNotEquals(Device.DEFAULT_VALUE, info)
     }
 
-    fun getDevice(): Device = Device(InstrumentationRegistry.getInstrumentation().targetContext)
+    private fun getDevice(): Device =
+        Device(InstrumentationRegistry.getInstrumentation().targetContext)
 }
