@@ -4,7 +4,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
-def currentVersionName = "2023.0.4"
+def currentVersionName = "2023.0.5"
 
 afterEvaluate {
     publishing {
@@ -62,9 +62,10 @@ java {
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.10.1'
+    implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'com.google.android.material:material:1.10.0'
+    implementation 'com.google.firebase:firebase-messaging-ktx:23.3.1'
     implementation 'androidx.test:rules:1.5.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
